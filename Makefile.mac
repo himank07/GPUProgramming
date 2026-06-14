@@ -1,0 +1,101 @@
+# macOS Makefile - Works without OpenMP
+
+CXX = clang++
+CFLAGS = -O3 -std=c++11
+
+# Targets
+TARGET_MAC = matrix_exp_mac
+SOURCE_MAC = matrix_exponentiation/main_mac.cpp
+
+.PHONY: all mac clean run run-small help
+
+# Default: Build Mac version
+all: mac
+
+# Build Mac version (CPU only, no GPU required)
+mac: $(TARGET_MAC)
+
+$(TARGET_MAC): $(SOURCE_MAC)
+	@echo "════════════════════════════════════════════════════════"
+	@echo "  Compiling Matrix Exponentiation for macOS"
+	@echo "════════════════════════════════════════════════════════"
+	$(CXX) $(CFLAGS) $(SOURCE_MAC) -o $@
+	@echo "✓ Successfully compiled: $(TARGET_MAC)"
+	@echo ""
+
+# Run Mac version with default parameters (512x512, power 100)
+run: $(TARGET_MAC)
+	@echo ""
+	@echo "════════════════════════════════════════════════════════"
+	@echo "  Running: macOS Version (512x512 matrix, A^100)"
+	@echo "════════════════════════════════════════════════════════"
+	@echo ""
+	./$(TARGET_MAC)
+
+# Run small matrix (quick test - 256x256)
+run-small: $(TARGET_MAC)
+	@echo "Running: 256x256 matrix (quick test)"
+	./$(TARGET_MAC) 256 100
+
+# Run medium matrix (512x512)
+run-medium: $(TARGET_MAC)
+	@echo "Running: 512x512 matrix"
+	./$(TARGET_MAC) 512 100
+
+# Run performance tests with multiple sizes
+run-all: $(TARGET_MAC)
+	@echo ""
+	@echo "════════════════════════════════════════════════════════"
+	@echo "  Running Performance Tests: Multiple Matrix Sizes"
+	@echo "════════════════════════════════════════════════════════"
+	@echo ""
+	@echo "--- Test 1: 256x256 Matrix ---"
+	./$(TARGET_MAC) 256 100
+	@echo ""
+	@echo "--- Test 2: 512x512 Matrix ---"
+	./$(TARGET_MAC) 512 100
+	@echo ""
+	@echo "--- Test 3: 1024x1024 Matrix ---"
+	./$(TARGET_MAC) 1024 100
+	@echo ""
+
+# Clean build artifacts
+clean:
+	@echo "Cleaning build artifacts..."
+	rm -f $(TARGET_MAC)
+	rm -f *.o *.d
+	@echo "✓ Clean complete"
+
+# Show help
+help:
+	@echo ""
+	@echo "╔════════════════════════════════════════════════════════════╗"
+	@echo "║  Matrix Exponentiation (A^100) - macOS Makefile Help      ║"
+	@echo "╚════════════════════════════════════════════════════════════╝"
+	@echo ""
+	@echo "Available targets:"
+	@echo "  make mac              - Build macOS version"
+	@echo "  make run              - Build and run (default 512x512)"
+	@echo "  make run-small        - Run quick test (256x256)"
+	@echo "  make run-medium       - Run medium test (512x512)"
+	@echo "  make run-all          - Run with multiple sizes"
+	@echo "  make clean            - Remove build artifacts"
+	@echo "  make help             - Show this help message"
+	@echo ""
+	@echo "Usage examples:"
+	@echo "  make                  # Build macOS version"
+	@echo "  make run              # Build and run"
+	@echo "  make run-all          # Run all tests"
+	@echo "  ./matrix_exp_mac 256 100  # Run custom size"
+	@echo ""
+	@echo "Features:"
+	@echo "  - Runs on any macOS system (no GPU required)"
+	@echo "  - Demonstrates binary exponentiation algorithm"
+	@echo "  - Shows algorithm works correctly"
+	@echo "  - Baseline for GPU comparison"
+	@echo ""
+	@echo "For GPU version with 627x speedup:"
+	@echo "  - Use NVIDIA GPU system (Linux/Windows)"
+	@echo "  - Or use Google Colab for free GPU"
+	@echo "  - See MAC_VERSION.md for instructions"
+	@echo ""
